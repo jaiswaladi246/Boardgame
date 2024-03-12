@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymleaf.org">
+
+<head th:replace="fragments/header.html :: html-head(title='Log In!')"></head>
+
+<body>
+    <nav th:replace="fragments/links :: nav.navigation-links"></nav>
+    <main class="container">
+        <div class="p-4 p-md-5 mb-4 text-center">
+            <h1 class="my-2 pb-3">Please Login</h1>
+
+            <div th:if="${param.error}" style="color: red;">
+                <p>Invalid User Name or Password</p>
+            </div>
+            <div th:if="${param.logout}" style="color: red;">
+                <p>You are now logged out</p>
+            </div>
+
+            <form action="#" th:action="@{/login}" method="post">
+                <div class="form-group row justify-content-center my-2">
+                    <label for="inputUserName" class="col-sm-2 col-form-label">User name:</label>
+                    <div class="col-sm-4">
+                        <input type="text" name="username" class="form-control" id="inputUserName"
+                            placeholder="Enter Username">
+                    </div>
+                </div>
+                <div class="form-group row justify-content-center my-2">
+                    <label for="inputPassword" class="col-sm-2 col-form-label">Password:</label>
+                    <div class="col-sm-4">
+                        <input type="password" name="password" class="form-control" id="inputPassword"
+                            placeholder="Enter Password">
+                    </div>
+                </div>
+                <input type="submit" value="Log In" class="btn btn-primary m-2 pb-2">
+            </form>
+
+            <div class="container text-center my-2">
+                <p class="lead">Join <a href="#" th:href="@{/newUser}"> Here </a></p>
+                <p class="lead"><a href="/" th:href="@{/}">Back to Home</a></p>
+            </div>
+
+        </div>
+    </main>
+    <div class="b-example-divider border border-light"></div>
+    <div th:include="fragments/links :: div.bottom-links"></div>
+    <div th:replace="fragments/footer.html :: page-footer"></div>
+</body>
+
+</html>

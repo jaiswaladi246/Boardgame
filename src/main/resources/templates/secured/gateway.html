@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+    xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head th:replace="fragments/header.html :: html-head(title='Secured Section!')"></head>
+
+<body>
+    <nav th:replace="fragments/links :: nav.navigation-links"></nav>
+    <main class="container">
+        <div class="p-4 p-md-5 mb-4 text-center">
+            <div class="container col-md-6">
+                <h1>You are successfully logged in</h1>
+                <div class="bg-light border rounded py-3 my-3">
+                    <div th:if="${message}" class="error">
+                        <p th:text="${message}"></p>
+                    </div>
+                    User's Name: <span sec:authentication="name"></span><br>
+                    Roles: <span sec:authentication="principal.authorities"></span><br>
+                </div>
+
+                <div sec:authorize="hasRole('ROLE_USER')">
+                    <p>Go to <a href="#" th:href="@{/user}">USER secured page</a> to see user's authorities
+                    </p>
+                </div>
+                <div sec:authorize="hasRole('ROLE_MANAGER')">
+                    <p>Go to <a href="#" th:href="@{/manager}">MANAGER secured page</a> to see manager's
+                        authorities</p>
+                </div>
+
+                <p>Go back <a href="#" th:href="@{/}">Home</a></p>
+
+                <form action="#" th:action="@{/logout}" method="post">
+                    <input type="submit" value="Logout" class="btn btn-primary m-2 pb-2">
+                </form>
+            </div>
+        </div>
+    </main>
+    <div class="b-example-divider border border-light"></div>
+    <div th:include="fragments/links :: div.bottom-links"></div>
+    <div th:replace="fragments/footer.html :: page-footer"></div>
+</body>
+
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymleaf.org">
+
+<head th:replace="fragments/header.html :: html-head(title='Managers Secured Area')"></head>
+
+<body>
+    <nav th:replace="fragments/links :: nav.navigation-links"></nav>
+    <main class="container">
+        <div class="p-4 p-md-5 mb-4 text-center">
+            <h1>Welcome to the Manager's Secured Area!</h1>
+            <div class="container col-md-6">
+                <div class="bg-light border rounded py-3 my-3 ">
+                    User name: <span sec:authentication="name"></span>
+                    <br>
+                    Roles: <span sec:authentication="principal.authorities"></span>
+                    <br><br>
+                    <p class="lead">Managers Can:</p>
+                    <ul class="lead">
+                        <li>
+                            Add board games to the list
+                        </li>
+                        <li>
+                            Write board game reviews
+                        </li>
+                        <li>
+                            Edit board game reviews
+                        </li>
+                        <li>
+                            Delete board game reviews
+                        </li>
+                    </ul>
+                </div>
+                <p class="lead">Go back to the <a href="#" th:href="@{/secured}">Gateway</a></p>
+                <p class="lead">Go back <a href="#" th:href="@{/}">Home</a></p>
+                <form action="#" th:action="@{/logout}" method="post">
+                    <input type="submit" value="Logout" class="btn btn-primary m-2 pb-2">
+                </form>
+            </div>
+        </div>
+    </main>
+    <div class="b-example-divider border border-light"></div>
+    <div th:include="fragments/links :: div.bottom-links"></div>
+    <div th:replace="fragments/footer.html :: page-footer"></div>
+</body>
+
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/header.html :: html-head(title='Add a Board Game')"></head>
+
+<body>
+    <nav th:replace="fragments/links :: nav.navigation-links"></nav>
+    <main class="container">
+        <div class="p-4 p-md-5 mb-4 text-center">
+            <div class="container col-md-6">
+                <h1>Add your boardgame!</h1>
+                <div class="bg-light border rounded py-3 my-3">
+                    <div id="error-boardgame" class="error-boardgame"></div>
+
+                    <form action="#" th:action="@{/boardgameAdded}" method="POST" th:object="${boardgame}"
+                        onsubmit="return verifyBoardGame()">
+                        Boardgame Name: <input type="text" name="name" th:field="*{name}">
+                        <br><br>
+                        <span
+                            title="1 - very easy, 2 - easy, 3 - medium, 4 - difficult, 5 - very difficult">Difficulty:</span>
+                        <input type="range" name="level" min="1" max="5" step="1" th:field="*{level}" id="myRange"
+                            oninput="this.nextElementSibling.value = this.value">
+                        <output>1</output>
+                        <br><br>
+                        Minimum Players:
+                        <select id="minPlayers" name="minPlayers" th:field="*{minPlayers}">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                        <br><br>
+                        Maximum Players:
+                        <select id="maxPlayers" name="maxPlayers" th:field="*{maxPlayers}">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="+">+</option>
+                        </select>
+                        <br><br>
+                        Game Type:
+                        <select id="gameType" name="gameType" th:field="*{gameType}">
+                            <option value="Party Game">Party Game</option>
+                            <option value="Trivia Game">Trivia Game</option>
+                            <option value="Strategy Game">Strategy Game</option>
+                        </select>
+                        <br><br>
+                        <input type="submit" value="Submit the boardgame" class="btn btn-primary m-2 pb-2">
+                    </form>
+                </div>
+                <p class="lead">Go back <a href="#" th:href="@{/}">Home</a></p>
+            </div>
+        </div>
+    </main>
+    <div class="b-example-divider border border-light"></div>
+    <div th:include="fragments/links :: div.bottom-links"></div>
+    <div th:replace="fragments/footer.html :: page-footer"></div>
+</body>
+
+</html>

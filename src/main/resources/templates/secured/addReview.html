@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/header.html :: html-head(title='Your boardgame Reviews')"></head>
+
+<body>
+    <nav th:replace="fragments/links :: nav.navigation-links"></nav>
+    <main class="container">
+        <div class="p-4 p-md-5 mb-4 text-center">
+            <h1 th:unless="${review.id}" th:text="|Leave a review for ${boardgame.name}|">Leave a review</h1>
+            <h1 th:if="${review.id}" th:text="|Edit reviews for ${boardgame.name}|">Edit reviews</h1>
+
+            <form action="#" th:action="@{/reviewAdded}" method="POST" th:object="${review}">
+                <div th:if="${review.id}">
+                    <input type="hidden" name="id" th:field="*{id}">
+                </div>
+                <textarea name="text" th:field="*{text}"></textarea>
+                <input type="hidden" name="gameId" th:value="${boardgame.id}">
+                <br>
+                <input type="submit" value="Submit the review" class="btn btn-primary m-2 pb-2">
+            </form>
+
+            <p class="lead">Go back <a href="#" th:href="@{/}">Home</a></p>
+        </div>
+    </main>
+    <div class="b-example-divider border border-light"></div>
+    <div th:include="fragments/links :: div.bottom-links"></div>
+    <div th:replace="fragments/footer.html :: page-footer"></div>
+</body>
+
+</html>

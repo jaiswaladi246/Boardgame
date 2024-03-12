@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Links</title>
+</head>
+
+<body>
+    <nav class="navigation-links navbar navbar-expand-lg navbar-dark bg-dark p-3">
+        <div class="container-fluid">
+            <a class="navbar-brand fs-5" href="/">Welcome to BoardGame Database!😎</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+                <ul class="navbar-nav fs-5">
+                    <li class="nav-item"><a href="#" th:href="@{/}" class="nav-link" aria-current="page">Home</a>
+                    </li>
+                    <li sec:authorize="!hasRole('ROLE_USER')" class="nav-item"><a href="#" th:href="@{/login}"
+                            class="nav-link">Login</a></li>
+                    <li sec:authorize="!hasRole('ROLE_USER')" class="nav-item"><a href="#" th:href="@{/newUser}"
+                            class="nav-link">Sign-up</a></li>
+                    <li sec:authorize="hasRole('ROLE_USER')" class="nav-item">
+                        <form action="#" th:action="@{/logout}" method="post">
+                            <input class="nav-link" type="submit" value="Logout">
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="bottom-links">
+        <div class="d-flex flex-wrap justify-content-center pt-3">
+            <a href="#">About</a> &nbsp;
+            <a href="mailto:mhbang820@gmail.com">Contact</a>
+        </div>
+    </div>
+</body>
+
+</html>

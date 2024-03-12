@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/header.html :: html-head(title='Boardgame Reviews')"></head>
+
+<body>
+    <nav th:replace="fragments/links :: nav.navigation-links"></nav>
+    <main class="container">
+        <div class="p-4 p-md-5 mb-4 text-center">
+            <h1 th:text="|User Reviews for ${boardgame.name}|">Reviews for the boardgame</h1>
+
+            <div th:unless="${reviews}">
+                <p class="lead">There is no review for the boardgame.</p>
+            </div>
+            <div class="my-3">
+                <table class="table" th:if="${reviews}">
+                    <thead class="thead-dark">
+                        <tr class="bg-dark text-white">
+                            <th scope="col">Reviews</th>
+                            <th scope="col" title="Only the users with [Manager Role] can edit & delete">Edit</th>
+                            <th scope="col" title="Only the users with [Manager Role] can edit & delete">Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="align-middle" th:each="review : ${reviews}">
+                            <td th:text="${review.text}">Review Text</td>
+                            <td>
+                                <a sec:authorize="hasRole('ROLE_MANAGER')" href="#"
+                                    th:href="@{|/${boardgame.id}/reviews/${review.id}|}">Edit</a>
+                                <p sec:authorize="!hasRole('ROLE_MANAGER')" title="Manager Role required"
+                                    class="text-secondary">Edit
+                                </p>
+                            </td>
+                            <td>
+                                <a sec:authorize="hasRole('ROLE_MANAGER')" href="#"
+                                    th:href="@{/deleteReview/}+${review.id}">Delete</a>
+                                <p sec:authorize="!hasRole('ROLE_MANAGER')" title="Manager Role required"
+                                    class="text-secondary">
+                                    Delete</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div sec:authorize="!hasRole('ROLE_MANAGER')" th:if="${reviews}">
+                <p class="lead">** Only the users with manager role can edit/ delete the reviews **</p>
+            </div>
+            <div sec:authorize="!hasRole('ROLE_USER')">
+                <p class="lead">To write reviews, please login <a href="#" th:href="@{/secured}">Here</a></p>
+            </div>
+            <div sec:authorize="hasRole('ROLE_USER')">
+                <p class="lead"><a href="#" th:href="@{/secured/addReview/}+${boardgame.id}">Add a Review!</a></p>
+            </div>
+            <div class="container text-center my-2">
+                <p class="lead">Go back <a href="#" th:href="@{/}">Home</a></p>
+            </div>
+        </div>
+    </main>
+    <div class="b-example-divider border border-light"></div>
+    <div th:include="fragments/links :: div.bottom-links"></div>
+    <div th:replace="fragments/footer.html :: page-footer"></div>
+</body>
+
+</html>

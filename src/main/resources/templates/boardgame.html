@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/header.html :: html-head(title=|${boardgame.name}|)"></head>
+
+<body>
+    <nav th:replace="fragments/links :: nav.navigation-links"></nav>
+    <main class="container">
+        <div class="p-4 p-md-5 mb-4 text-center">
+            <div class="container col-md-6">
+                <h1 th:text="|Information of ${boardgame.name}|">Boardgame Information</h1>
+
+                <div class="bg-light border rounded py-3 my-3">
+                    <div class="h5 py-3" title="1 - Very easy, 2 - Easy, 3 - Medium, 4 - Difficult, 5 - Very Difficult"
+                        th:text="|Game Level: ${boardgame.level}|">Level</div>
+                    <div class="h5 py-3" th:unless="${boardgame.maxPlayers} == '+'"
+                        th:text="|Players: ${boardgame.minPlayers} - ${boardgame.maxPlayers} people|">Players</div>
+                    <div class="h5 py-3" th:if="${boardgame.maxPlayers} == '+'"
+                        th:text="|Players: ${boardgame.minPlayers} + Players|">
+                        Players
+                    </div>
+                    <div class="h5 py-3" th:text="|Game Type: ${boardgame.gameType}|">
+                        Game Type
+                    </div>
+                    <div class="h5 py-3"><a href="#" th:href="@{|/${boardgame.id}/reviews|}">Click Here</a> for user
+                        reviews</div>
+                </div>
+
+                <div sec:authorize="!hasRole('ROLE_USER')">
+                    <p class="lead">For more services, login <a href="#" th:href="@{/login}">Here</a></p>
+                    <p class="lead">To join to the service, <a href="#" th:href="@{/newUser}">Click</a> here</p>
+                </div>
+                <div sec:authorize="hasRole('ROLE_USER') || hasRole('ROLE_MANAGER')">
+                    <p class="lead">Click <a href="#" th:href="@{/secured/addBoardGame}">Here</a> to add a boardgame!
+                    </p>
+                    <form action="#" th:action="@{/logout}" method="post">
+                        <input type="submit" value="Logout" class="btn btn-primary m-2 pb-2">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+    <div class="b-example-divider border border-light"></div>
+    <div th:include="fragments/links :: div.bottom-links"></div>
+    <div th:replace="fragments/footer.html :: page-footer"></div>
+</body>
+
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+    xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5" data-bs-theme="light">
+
+
+<head th:replace="fragments/header.html :: html-head(title='Boardgame Home')"></head>
+
+<body>
+    <nav th:replace="fragments/links :: nav.navigation-links"></nav>
+
+    <main class="container">
+        <div class="p-4 p-md-5 mb-4 text-center">
+            <div class="container col-md-6">
+                <h1>Boardgame Lists</h1>
+
+                <div id="error" class="error pt-3">
+                    <div th:if="${userAddedMsg}">
+                        <p th:text="${userAddedMsg}"></p>
+                    </div>
+                </div>
+
+                <div th:unless="${boardgames.empty}" class="py-3 my-3">
+                    <div class="list-group d-flex flex-wrap justify-content-center" th:each="boardgame : ${boardgames}">
+                        <a href="#" th:href='@{|/${boardgame.id}|}'
+                            class="list-group-item list-group-item-action py-3 my-2">
+                            <h4 th:text="${boardgame.name}">Name</h4>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${boardgames.empty}">
+                <p>Currently there is no boardgame database exists.</p>
+            </div>
+
+            <div sec:authorize="!hasRole('ROLE_USER')">
+                <p class="lead">For more services, login <a href="#" th:href="@{/login}">Here</a></p>
+                <p class="lead">To join to the service, <a href="#" th:href="@{/newUser}">Click</a> here</p>
+            </div>
+            <div sec:authorize="hasRole('ROLE_USER') || hasRole('ROLE_MANAGER')">
+                <p class="lead">Click <a href="#" th:href="@{/secured/addBoardGame}">Here</a> to add a boardgame!</p>
+                <form action="#" th:action="@{/logout}" method="post">
+                    <input type="submit" value="Logout" class="btn btn-primary m-2 pb-2">
+                </form>
+            </div>
+        </div>
+    </main>
+    <div class="b-example-divider border border-light"></div>
+
+    <div th:include="fragments/links :: div.bottom-links"></div>
+    <div th:replace="fragments/footer.html :: page-footer"></div>
+</body>
+
+</html>
