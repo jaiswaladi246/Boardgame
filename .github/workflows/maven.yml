@@ -30,7 +30,7 @@ jobs:
       uses: sonarsource/sonarqube-scan-action@v1
       with:
         args: >
-          -Dsonar.host.url=${{secrets.SONAR_URL}}
+          -Dsonar.host.url=${{ secrets.SONAR_URL }}
           -Dsonar.login=${{ secrets.SONAR_TOKEN }}
           -Dsonar.projectKey=Boardgame
           -Dsonar.projectName=Boardgame
