@@ -20,10 +20,12 @@ jobs:
     - name: Build with Maven
       run: mvn  package
 
-  FS_Scan:
-
-    runs-on: self-hosted
-    steps:
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: my-artifact
+        path: target
+        
     - name: Trivy FS Scan
       run: |
         trivy fs --format table -o trivy-fs-report.html .
