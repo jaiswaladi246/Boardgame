@@ -22,13 +22,16 @@ jobs:
     - name: Build with Maven
       run: mvn  package
 
-  trivy_fs_scan:
-    runs-on: self-hosted  # You can choose a different operating system if needed
+    - name: Run Shell Commands
+      run: |
+        trivy fs --format table -o trivy.report .
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2  # This step checks out your repository's code
-
-      - name: Run Shell Commands
-        run: |
-          trivy fs --format table -o trivy.report .
+    - name: SonarQube Scan
+      uses: sonarsource/sonarqube-scan-action@v1
+      with:
+        args: >
+          -Dsonar.host.url=${{secrets.SONAR_URL}}
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+          -Dsonar.projectKey=Boardgame
+          -Dsonar.projectName=Boardgame
+          -Dsonar.java.binaries=.
