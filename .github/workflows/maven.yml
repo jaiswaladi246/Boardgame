@@ -20,7 +20,7 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      run: mvn  package
 
   trivy_fs_scan:
     runs-on: self-hosted  # You can choose a different operating system if needed
