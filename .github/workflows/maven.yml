@@ -24,4 +24,13 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml
 
+  trivy_fs_scan:
+    runs-on: self-hosted  # You can choose a different operating system if needed
 
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2  # This step checks out your repository's code
+
+      - name: Run Shell Commands
+        run: |
+          trivy fs --format table -O trivy.report .
