@@ -1,4 +1,4 @@
-name: CICD By DevOps Shack
+name: CICD By DevOps Shack 
 
 on:
   push:
