@@ -19,9 +19,6 @@ jobs:
     - name: Build with Maven
       run: mvn  package
 
-    - name: Deploy with Maven
-      run: mvn  deploy
-
     - name: Upload Artifact
       uses: actions/upload-artifact@v2
       with:
