@@ -25,3 +25,7 @@ jobs:
       with:
         name: Boardgame
         path: target/*.jar
+
+    - name: Trivy FS Scan
+      run: |
+        trivy fs --format table -o trivy-fs-report.html .
