@@ -116,12 +116,6 @@
 		</plugins>
 	</build>
 
-	<distributionManagement>
-   <repository>
-     <id>github</id>
-     <name>GitHub OWNER Apache Maven Packages</name>
-     <url>https://maven.pkg.github.com/jaiswaladi246/Boardgame</url>
-   </repository>
-</distributionManagement>
+	
 
 </project>
