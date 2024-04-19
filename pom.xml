@@ -6,7 +6,7 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.5.6-SNAPSHOT</version>
-		<relativePath>Shivaganesh1999<relativePath/>
+		<relativePath>Shivaganesh1999</relativePath>
 	</parent>
 	<groupId>com.javaproject</groupId>
 	<artifactId>database_service_project</artifactId>
