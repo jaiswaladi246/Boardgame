@@ -18,7 +18,7 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Build with Maven
-      run: mvn package --file https://github.com/Shivaganesh1999/Board-game.git
+      run: mvn package --file pom.xml
 
     - uses: actions/upload-artifact@v4
       with:
