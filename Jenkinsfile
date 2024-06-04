@@ -6,7 +6,6 @@ pipeline {
         maven 'maven3'
     }
 
-    
     stages {
         stage('git checkout') {
             steps {
