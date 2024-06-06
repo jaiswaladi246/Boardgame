@@ -7,7 +7,8 @@ pipeline {
         jdk "jdk17"
     }
 
-            stage('Compile') {
+    stages {
+        stage('Compile') {
             steps {
                 // Compile the Maven project
                 sh 'mvn compile'
