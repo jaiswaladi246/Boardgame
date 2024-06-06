@@ -14,7 +14,6 @@ pipeline {
                 sh 'mvn compile'
             }
         }
-
         stage('Test') {
             steps {
                 // Run tests using Maven
