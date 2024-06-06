@@ -1,14 +1,14 @@
 pipeline {
     agent any
 
-    
     tools {
         // Define the Maven and JDK tools to be used in the pipeline
         maven "maven3"
         jdk "jdk17"
     }
 
-            stage('Compile') {
+    stages {
+        stage('Compile') {
             steps {
                 // Compile the Maven project
                 sh 'mvn compile'
