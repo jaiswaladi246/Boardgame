@@ -1,6 +1,7 @@
 pipeline {
     agent any
 
+    
     tools {
         // Define the Maven and JDK tools to be used in the pipeline
         maven "maven3"
