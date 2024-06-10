@@ -1,20 +1,20 @@
-pipeline {    
-    agent any 
-    tools {
-        jdk 'jdk17'
-        maven 'maven3'
+pipeline {
+    agent any
+    
+    tools{
+        maven 'maven'
     }
 
-    stages {   
+    stages {
+        
+        stage('Git') {
+            steps {
+                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/Devangam/Boardgame.git']])
+            }
+        }
         stage('Compile') {
             steps {
                 sh 'mvn compile'
-            }
-        }
-        
-        stage('Test') {
-            steps {
-                sh 'mvn test'
             }
         }
         
