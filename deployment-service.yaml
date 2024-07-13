@@ -31,6 +31,6 @@ spec:
     app: boardgame
   ports:
     - protocol: "TCP"
-      port: 8080 
+      port: 80
       targetPort: 8080 
   type: LoadBalancer # type of the service.
