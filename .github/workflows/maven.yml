@@ -34,6 +34,15 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
+    - name: SonarQube Quality Gate check
+      id: sonarqube-quality-gate-check
+      uses: sonarsource/sonarqube-quality-gate-action@master
+      # Force to fail step after specific time.
+      timeout-minutes: 5
+      env:
+       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+       SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v3
 
@@ -58,11 +67,6 @@ jobs:
       run: |
           docker push adijaiswal/boardgame:latest
 
-    - name: Kubectl Action
-      uses: tale/kubectl-action@v1
-      with:
-        base64-kube-config: ${{ secrets.KUBE_CONFIG }}
-    - run: |
-          kubectl apply -f deployment-service.yaml
+
 
 
