@@ -12,7 +12,7 @@ pipeline {
     stages {   
         stage('Compile') {
             steps {
-                git branch: 'develop', url: 'https://github.com/zurry8474/Boardgame.git'
+                sh 'mvn compile'
             }
         }
         
