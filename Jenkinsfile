@@ -24,8 +24,7 @@ pipeline {
         stage('Code check') {
             steps {
               withSonarQubeEnv('sonar-scanner') {
-                    sh '''mvn clean verify sonar:sonar -Dsonar.projectKey=Project1 -Dsonar.projectName='Project1' -Dsonar.host.url=mention the url of sonarqube'''
-                    echo 'SonarQube Analysis Completed'
+                  sh '''mvn clean verify sonar:sonar -Dsonar.projectKey=Project1 -Dsonar.host.url=http://98.81.146.83:9000 -Dsonar.login=sqp_97ed9b2153e7d71f3c99bf83cb221e6e25156868'''
                 }
             }
         }
