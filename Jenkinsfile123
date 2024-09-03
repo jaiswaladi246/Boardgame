@@ -1,28 +1,166 @@
 pipeline {
-    agent {label 'slave-1'}
-    
+    agent any
+
     tools {
-        jdk 'jdk17'
         maven 'maven3'
+        jdk 'jdk17'
     }
 
-    stages {   
-        stage('Compile') {
+    environment {
+        SCANNER_HOME = tool 'sonar-scanner'
+    }
+
+    stages {
+        stage('Git Checkout') {
             steps {
-                sh 'mvn compile'
+                git 'https://github.com/neetaniraula/BoardgameListingWebApp.git'
             }
         }
-        
-        stage('Test') {
+
+        stage('Code-Compile') {
             steps {
-                sh 'mvn test'
+                sh "mvn clean compile"
             }
         }
-        
-        stage('Build') {
+
+        stage('Unit-Test') {
             steps {
-                sh 'mvn package'
+                sh "mvn clean test"
             }
+        }
+
+        stage('Trivy Scan') {
+            steps {
+                sh "trivy fs --format json -o trivy-report.json ."
+            }
+        }
+
+        stage('Sonar Analysis') {
+            steps {
+                withSonarQubeEnv('sonar') {
+                    sh """
+                    $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=Devops-CICD \
+                    -Dsonar.java.binaries=. \
+                    -Dsonar.projectKey=Devops-CICD
+                    """
+                }
+            }
+        }
+
+        stage('Quality Gate Check') {
+            steps {
+                script {
+                    waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token'
+                }
+            }
+        }
+
+        stage('Code Build') {
+            steps {
+                sh "mvn clean package"
+            }
+        }
+
+        stage('Deploy to Nexus') {
+            steps {
+                withMaven(globalMavenSettingsConfig: 'global-settings-nexus', jdk: 'jdk17', maven: 'maven3', mavenSettingsConfig: '', traceability: true) {
+                    sh "mvn deploy"
+                }
+            }
+        }
+
+        stage('Docker Build and Tag') {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'docker-cred', toolName: 'docker') {
+                        sh "docker build -t neeta095/boardwebapp:latest ."
+                    }
+                }
+            }
+        }
+
+        stage('Docker Image Scan') {
+            steps {
+                sh "trivy image neeta095/boardwebapp:latest"
+            }
+        }
+
+        stage('Docker Push Image') {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'docker-cred', toolName: 'docker') {
+                        sh "docker push neeta095/boardwebapp:latest"
+                    }
+                }
+            }
+        }
+
+        stage('Deploy Application to Container') {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'docker-cred', toolName: 'docker') {
+                        sh "docker run -d -p 8087:8080 neeta095/boardwebapp:latest"
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                withKubeConfig(caCertificate: '', clusterName: 'kubernetes', contextName: '', credentialsId: 'k8-cred', namespace: 'webapps', restrictKubeConfigAccess: false, serverUrl: 'https://172.31.89.66:6443') {
+                    sh "kubectl apply -f deployment-service.yml"
+                }
+            }
+        }
+
+        stage('Verifying Deployment') {
+            steps {
+                withKubeConfig(caCertificate: '', clusterName: 'kubernetes', contextName: '', credentialsId: 'k8-cred', namespace: 'webapps', restrictKubeConfigAccess: false, serverUrl: 'https://172.31.89.66:6443') {
+                    sh "kubectl get pods"
+                    sh "kubectl get svc -n webapps"
+                }
+            }
+        }
+
+        stage('Send Email Notification') {  // New stage added here
+            steps {
+                script {
+                    def jobName = env.JOB_NAME
+                    def buildNumber = env.BUILD_NUMBER
+                    def pipelineStatus = currentBuild.result ?: 'UNKNOWN'
+                    def bannerColor = pipelineStatus.toUpperCase() == 'SUCCESS' ? 'green' : 'red'
+
+                    def body = """
+                        <html>
+                        <body>
+                        <div style="border: 4px solid ${bannerColor}; padding: 10px;">
+                        <h2>${jobName} - Build ${buildNumber}</h2>
+                        <div style="background-color: ${bannerColor}; padding: 10px;">
+                        <h3 style="color: white;">Pipeline Status: ${pipelineStatus.toUpperCase()}</h3>
+                        </div>
+                        <p>Check the <a href="${BUILD_URL}">console output</a>.</p>
+                        </div>
+                        </body>
+                        </html>
+                    """
+
+                    emailext(
+                        subject: "${jobName} - Build ${buildNumber} - ${pipelineStatus.toUpperCase()}",
+                        body: body,
+                        to: 'neeta.niraula@gmail.com',
+                        from: 'jenkins@example.com',
+                        replyTo: 'jenkins@example.com',
+                        mimeType: 'text/html',
+                        attachmentsPattern: 'trivy-report.json'
+                    )
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline execution completed.'
         }
     }
 }
