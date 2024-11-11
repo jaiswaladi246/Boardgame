@@ -1,53 +1,58 @@
-# BoardgameListingWebApp
+BoardgameListingWebApp
+Description
+A full-stack web application that serves as a board game database, allowing users to view, add, edit, and review board games. This repository contains both application code and infrastructure as code for deployment on AWS and CI/CD.
 
-## Description
+Technologies Used
+Application Stack
+Java and Spring Boot for backend logic and REST API
+Thymeleaf, HTML5, CSS, JavaScript for front-end and UI
+JDBC with H2 Database Engine for database operations
+Spring Security for authentication and authorization
+JUnit for testing
+Bootstrap for styling
+Deployment and CI/CD
+Amazon Web Services (AWS): EC2, S3, IAM, CloudFormation, RDS, CloudWatch, CloudTrail, CloudFront, DynamoDB
+GitHub and GitHub Actions for version control and CI/CD
+Jenkins and Bitbucket for automated builds
+Ansible for configuration management
+Docker for containerization
+AWS CodePipeline and CodeCommit for CI/CD
+Features
+User Authentication: Secure login and permissions using Spring Security
+Role-based Authorization: Different permissions for non-members, users, and managers
+AWS Integration: Deployed on AWS EC2 with an automated infrastructure setup
+Automated Testing: JUnit for unit tests
+Automated Deployment: GitHub Actions and Jenkins pipeline for CI/CD
+Monitoring: Integrated with CloudWatch for logging and alerts
+AWS Services Overview
+EC2: Hosting the application server
+S3: Storing assets and backups
+IAM: Access management
+CloudFormation: Infrastructure as Code (IaC) for provisioning resources
+RDS: Database service
+CloudWatch and CloudTrail: Logging and monitoring
+DynamoDB: Optional NoSQL database
+CodePipeline and CodeCommit: CI/CD management
+How to Run Locally
+Clone the repository
+Open the project in an IDE (e.g., IntelliJ, Eclipse)
 
-**Board Game Database Full-Stack Web Application.**
-This web application displays lists of board games and their reviews. While anyone can view the board game lists and reviews, they are required to log in to add/ edit the board games and their reviews. The 'users' have the authority to add board games to the list and add reviews, and the 'managers' have the authority to edit/ delete the reviews on top of the authorities of users.  
 
-## Technologies
 
-- Java
-- Spring Boot
-- Amazon Web Services(AWS) EC2
-- Thymeleaf
-- Thymeleaf Fragments
-- HTML5
-- CSS
-- JavaScript
-- Spring MVC
-- JDBC
-- H2 Database Engine (In-memory)
-- JUnit test framework
-- Spring Security
-- Twitter Bootstrap
-- Maven
+Detailed Explanation of Added Files
+Ansible: Place Ansible playbooks in the ansible/playbooks/ directory to handle configuration tasks, like setting up environments or deploying application updates.
 
-## Features
+CI/CD (GitHub Actions): Add a workflow file (deploy.yml) under .github/workflows to define CI/CD jobs, e.g., building the project, running tests, deploying to AWS EC2.
 
-- Full-Stack Application
-- UI components created with Thymeleaf and styled with Twitter Bootstrap
-- Authentication and authorization using Spring Security
-  - Authentication by allowing the users to authenticate with a username and password
-  - Authorization by granting different permissions based on the roles (non-members, users, and managers)
-- Different roles (non-members, users, and managers) with varying levels of permissions
-  - Non-members only can see the boardgame lists and reviews
-  - Users can add board games and write reviews
-  - Managers can edit and delete the reviews
-- Deployed the application on AWS EC2
-- JUnit test framework for unit testing
-- Spring MVC best practices to segregate views, controllers, and database packages
-- JDBC for database connectivity and interaction
-- CRUD (Create, Read, Update, Delete) operations for managing data in the database
-- Schema.sql file to customize the schema and input initial data
-- Thymeleaf Fragments to reduce redundancy of repeating HTML elements (head, footer, navigation)
+CloudFormation: Add templates under cloudformation/templates/ to set up AWS resources. For example, a boardgame-app.yml template could automate the creation of EC2 instances, S3 buckets, and an RDS database.
 
-## How to Run
+Jenkinsfile: This file defines your Jenkins pipeline, including steps to build, test, and deploy the application. If you’re using CodePipeline, the Jenkinsfile can be adjusted to integrate with it.
 
-1. Clone the repository
-2. Open the project in your IDE of choice
-3. Run the application
-4. To use initial user data, use the following credentials.
-  - username: bugs    |     password: bunny (user role)
-  - username: daffy   |     password: duck  (manager role)
-5. You can also sign-up as a new user and customize your role to play with the application! 😊
+Dockerfile: Include a Dockerfile to containerize the application. Define the base image, dependencies, and entry point for easy deployment on different platforms.
+
+Scripts: Add scripts/deploy.sh and scripts/setup.sh for any deployment or server setup needs.
+
+Additional Configuration
+ServiceNow Integration: If ServiceNow ticketing or monitoring is required, add any API calls or integration scripts in a separate servicenow/ directory or as part of your deployment scripts.
+
+Service Level Agreements (SLA): Use CloudWatch and CloudTrail to monitor SLAs. Create alerts for when thresholds are exceeded and include SLA compliance guidelines in documentation.
