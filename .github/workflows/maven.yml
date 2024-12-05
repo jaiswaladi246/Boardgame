@@ -1,4 +1,4 @@
-name: Java CI with Maven
+name: Java CI with Maven and Deployment
 
 on:
   push:
@@ -7,64 +7,94 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
-    runs-on: self-hosted
-
+  # Job: Setup
+  setup:
+    runs-on: ubuntu-latest
     steps:
       # Check out the repository
-    - name: Checkout Code
-      uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-    - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      # Install dependencies
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openjdk-17-jdk maven docker.io
+          echo "Dependencies installed!"
 
+  # Job: Build
+  build:
+    runs-on: ubuntu-latest
+    needs: setup  # Ensure Setup job runs first
+    steps:
+      # Check out the repository
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-    # Trivy FS Scan (via Docker)
-    - name: Trivy FS Scan
-      run: |
-        docker run --rm -v $(pwd):/project aquasec/trivy fs --format table -o /project/fs.html /project
-      # Upload FS scan report as an artifact
-    - name: Upload FS Scan Report
-      uses: actions/upload-artifact@v3
-      with:
-        name: fs-scan-report
-        path: fs.html
+      # Build with Maven
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml
 
-    - name: SonarQube Scan
-      uses: sonarsource/sonarqube-scan-action@master
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      # Trivy FS Scan
+      - name: Trivy FS Scan
+        run: |
+          docker run --rm -v $(pwd):/project aquasec/trivy fs --format table -o /project/fs.html /project
+      # Upload FS Scan Report
+      - name: Upload FS Scan Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: fs-scan-report
+          path: fs.html
 
-    - name: SonarQube Quality Gate check
-      id: sonarqube-quality-gate-check
-      uses: sonarsource/sonarqube-quality-gate-action@master
-      # Force to fail step after specific time.
-      timeout-minutes: 5
-      env:
-       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-       SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      # SonarQube Scan
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
-    - name: Build Docker Image
-      run: |
-        docker build -t truong642003/boardgame:latest .
+      # SonarQube Quality Gate Check
+      - name: SonarQube Quality Gate Check
+        id: sonarqube-quality-gate-check
+        uses: sonarsource/sonarqube-quality-gate-action@master
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
+  # Job: Deployment
+  deployment:
+    runs-on: ubuntu-latest
+    needs: build  # Ensure Build job runs first
+    steps:
+      # Check out the repository
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-    # Trivy Image Scan (via Docker)
-    - name: Trivy Image Scan
-      run: |
-        docker run --rm aquasec/trivy image --format table -o trivy-image-report.html truong642003/boardgame:latest
-      # Upload Trivy Image scan report as an artifact
-    - name: Upload Trivy Image Scan Report
-      uses: actions/upload-artifact@v3
-      with:
-        name: trivy-image-report
-        path: trivy-image-report.html
+      # Build Docker Image
+      - name: Build Docker Image
+        run: |
+          docker build -t truong642003/boardgame:latest .
 
-    - name: Push Docker Image
-      run: |
+      # Trivy Image Scan
+      - name: Trivy Image Scan
+        run: |
+          docker run --rm aquasec/trivy image --format table -o trivy-image-report.html truong642003/boardgame:latest
+      # Upload Trivy Image Scan Report
+      - name: Upload Trivy Image Scan Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: trivy-image-report
+          path: trivy-image-report.html
+
+      # Login to Docker Hub
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # Push Docker Image to Docker Hub
+      - name: Push Docker Image
+        run: |
           docker push truong642003/boardgame:latest
-
-
-
-
