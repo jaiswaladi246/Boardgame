@@ -15,12 +15,13 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # Install dependencies
+      # Remove conflicting packages and install dependencies
       - name: Install Dependencies
         run: |
           sudo apt-get update
+          sudo apt-get remove -y containerd  # Remove conflicting package
           sudo apt-get install -y openjdk-17-jdk maven docker.io
-          echo "Dependencies installed!"
+          echo "Dependencies installed successfully!"
 
   # Job: Build
   build:
