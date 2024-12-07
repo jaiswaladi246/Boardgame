@@ -46,21 +46,13 @@ jobs:
           name: fs-scan-report
           path: fs.html
 
-      # SonarQube Scan
-      - name: SonarQube Scan
-        uses: sonarsource/sonarqube-scan-action@master
+      # SonarCloud Scan
+      - name: SonarCloud Scan
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        run: |
+          mvn sonar:sonar -Dsonar.projectKey=VuDucTruong_Boardgame -Dsonar.organization=victor-vu -Dsonar.host.url=https://sonarcloud.io
 
-      # SonarQube Quality Gate Check
-      - name: SonarQube Quality Gate Check
-        id: sonarqube-quality-gate-check
-        uses: sonarsource/sonarqube-quality-gate-action@master
-        timeout-minutes: 5
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
   # Job: Deployment
   deployment:
