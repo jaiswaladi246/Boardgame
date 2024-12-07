@@ -8,6 +8,13 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
+
+      - name: Check previous workflow status
+        if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+        run: |
+          echo "Previous workflow failed. Exiting..."
+          exit 1
+
       - name: Checkout Code
         uses: actions/checkout@v4
 
@@ -30,7 +37,8 @@ jobs:
 
       - name: Trivy Image Scan
         run: |
-          docker run --rm -v $(pwd):/output aquasec/trivy image --format template --template "@/usr/bin/html.tpl" -o /output/trivy-image-report.html ${{ secrets.DOCKERHUB_USERNAME }}/boardgame:latest
+          curl -o html.tpl https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl
+          docker run --rm -v $(pwd):/output aquasec/trivy image --format template --template "@/html.tpl" -o /output/trivy-image-report.html ${{ secrets.DOCKERHUB_USERNAME }}/boardgame:latest
 
       - name: Upload Trivy Image Scan Report
         uses: actions/upload-artifact@v4

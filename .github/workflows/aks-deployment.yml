@@ -8,6 +8,13 @@ jobs:
   deployment:
     runs-on: ubuntu-latest
     steps:
+
+      - name: Check previous workflow status
+        if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+        run: |
+          echo "Previous workflow failed. Exiting..."
+          exit 1
+
       - name: Checkout Code
         uses: actions/checkout@v4
 
