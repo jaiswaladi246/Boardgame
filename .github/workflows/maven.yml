@@ -8,19 +8,19 @@ on:
 
 jobs:
   # Job: Setup
-  setup:
-    runs-on: ubuntu-latest
-    steps:
-      # Check out the repository
-      - name: Checkout Code
-        uses: actions/checkout@v4
+  # setup:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     # Check out the repository
+  #     - name: Checkout Code
+  #       uses: actions/checkout@v4
 
-      # Remove conflicting packages and install dependencies
-      - name: Install Dependencies
-        run: |
+  #     # Remove conflicting packages and install dependencies
+  #     - name: Install Dependencies
+  #       run: |
 
-          sudo apt-get install -y openjdk-17-jdk maven 
-          echo "Dependencies installed successfully!"
+  #         sudo apt-get install -y openjdk-17-jdk maven 
+  #         echo "Dependencies installed successfully!"
 
   # Job: Build
   # build:
@@ -87,6 +87,9 @@ jobs:
       - name: Trivy Image Scan
         run: |
           docker run --rm aquasec/trivy image --format table -o trivy-image-report.html ${{ secrets.DOCKERHUB_USERNAME }}/boardgame:latest
+
+      - name: Debug Output
+        run: ls -R
       # Upload Trivy Image Scan Report
       - name: Upload Trivy Image Scan Report
         uses: actions/upload-artifact@v3
