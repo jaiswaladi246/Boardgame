@@ -61,6 +61,10 @@ jobs:
       # Check out the repository
       - name: Checkout Code
         uses: actions/checkout@v4
+      
+      - name: Build JAR with Maven
+        run: |
+          mvn package -DskipTests
 
       # Build Docker Image
       - name: Build Docker Image
