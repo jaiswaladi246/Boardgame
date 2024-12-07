@@ -35,10 +35,14 @@ jobs:
         run: |
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/boardgame:latest
 
-      - name: Trivy Image Scan
-        run: |
-          curl -o html.tpl https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl
-          docker run --rm -v $(pwd):/output aquasec/trivy image --format template --template "@/html.tpl" -o /output/trivy-image-report.html ${{ secrets.DOCKERHUB_USERNAME }}/boardgame:latest
+      # Step 3: Scan Docker image with Trivy Action
+      - name: Trivy Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/boardgame:latest
+          format: 'template'
+          template: "@$HOME/.local/bin/trivy-bin/contrib/html.tpl"
+          output: 'trivy-image-report.html'
 
       - name: Upload Trivy Image Scan Report
         uses: actions/upload-artifact@v4
