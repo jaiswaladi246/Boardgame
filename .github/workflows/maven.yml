@@ -56,7 +56,7 @@ jobs:
   # Job: Deployment
   deployment:
     runs-on: ubuntu-latest
-    needs: build  # Ensure Build job runs first
+    #needs: build  # Ensure Build job runs first
     steps:
       # Check out the repository
       - name: Checkout Code
