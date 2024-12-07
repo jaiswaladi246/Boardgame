@@ -83,10 +83,13 @@ jobs:
         run: |
           docker push truong642003/boardgame:latest
 
+      - name: Check Write Permissions
+        run: mkdir test && echo "Write permission OK" || echo "Permission denied"
+
       # Trivy Image Scan
       - name: Trivy Image Scan
         run: |
-          docker run --rm aquasec/trivy image --format table -o trivy-image-report.html ${{ secrets.DOCKERHUB_USERNAME }}/boardgame:latest --debug
+          docker run --rm -v $(pwd):/output aquasec/trivy image --format table -o /output/trivy-image-report.html ${{ secrets.DOCKERHUB_USERNAME }}/boardgame:latest
 
       - name: Debug Output
         run: ls -R
