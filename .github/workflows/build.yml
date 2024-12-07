@@ -25,7 +25,7 @@ jobs:
           output: 'fs.html'
 
       - name: Upload FS Scan Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: fs-scan-report
           path: fs.html
