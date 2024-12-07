@@ -30,7 +30,7 @@ jobs:
 
       - name: Trivy Image Scan
         run: |
-          docker run --rm -v $(pwd):/output aquasec/trivy image --format html -o /output/trivy-image-report.html ${{ secrets.DOCKERHUB_USERNAME }}/boardgame:latest
+          docker run --rm -v $(pwd):/output aquasec/trivy image --format template --template "@/usr/bin/html.tpl" -o /output/trivy-image-report.html ${{ secrets.DOCKERHUB_USERNAME }}/boardgame:latest
 
       - name: Upload Trivy Image Scan Report
         uses: actions/upload-artifact@v4
