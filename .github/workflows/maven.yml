@@ -154,11 +154,11 @@ jobs:
 
     - name: Deploy Prometheus
       run: |
-        helm upgrade --install prometheus prometheus-community/prometheus --namespace monitoring
+        helm upgrade --install prometheus prometheus-community/prometheus --namespace monitoring --set service.type=LoadBalancer
 
     - name: Deploy Grafana
       run: |
-        helm upgrade --install grafana grafana/grafana --namespace monitoring --set adminPassword=${{ secrets.GRAFANA }}
+        helm upgrade --install grafana  grafana/grafana --namespace monitoring --set adminPassword=${{ secrets.GRAFANA }} --set service.type=LoadBalancer
 
     - name: Verify Pods
       run: |
