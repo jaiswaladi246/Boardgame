@@ -1,0 +1,27 @@
+datasources:
+  default:
+    name: Prometheus
+    type: prometheus
+    url: http://prometheus-server.monitoring.svc.cluster.local:80
+    access: proxy
+    isDefault: true
+
+
+dashboards:
+  default:
+    kubernetes-dashboard:
+      gnetId: 1860
+      datasource: Prometheus
+      folder: "Prometheus Dashboards"
+      options:
+        refresh: 10s
+
+    prometheus-dashboard:
+      gnetId: 13332
+      datasource: Prometheus
+      folder: "K8s Metrics"
+      options:
+        refresh: 10s
+
+
+  

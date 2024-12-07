@@ -158,7 +158,7 @@ jobs:
 
     - name: Deploy Grafana
       run: |
-        helm upgrade --install grafana  grafana/grafana --namespace monitoring --set adminPassword=${{ secrets.GRAFANA }} --set service.type=LoadBalancer
+        helm upgrade --install grafana  grafana/grafana --namespace monitoring --set adminPassword=${{ secrets.GRAFANA }} --set service.type=LoadBalancer -f grafana-dashboards.yaml
 
     - name: Verify Pods
       run: |
