@@ -14,9 +14,15 @@ jobs:
       - name: Build with Maven
         run: mvn -B package --file pom.xml
 
+
       - name: Trivy FS Scan
-        run: |
-          docker run --rm -v $(pwd):/project aquasec/trivy fs --format table -o /project/fs.html /project
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: "fs"
+          scan-ref: .
+          format: 'template'
+          template: "@$HOME/.local/bin/trivy-bin/contrib/html.tpl"
+          output: 'fs.html'
 
       - name: Upload FS Scan Report
         uses: actions/upload-artifact@v3
