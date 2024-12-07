@@ -86,7 +86,7 @@ jobs:
       # Trivy Image Scan
       - name: Trivy Image Scan
         run: |
-          docker run --rm aquasec/trivy image --format table -o trivy-image-report.html ${{ secrets.DOCKERHUB_USERNAME }}/boardgame:latest
+          docker run --rm aquasec/trivy image --format table -o trivy-image-report.html ${{ secrets.DOCKERHUB_USERNAME }}/boardgame:latest --debug
 
       - name: Debug Output
         run: ls -R
