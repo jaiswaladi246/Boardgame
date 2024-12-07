@@ -48,10 +48,10 @@ jobs:
 
       # SonarCloud Scan
       - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: |
-          mvn sonar:sonar -Dsonar.projectKey=VuDucTruong_Boardgame -Dsonar.organization=victor-vu -Dsonar.host.url=https://sonarcloud.io
+        
 
 
   # Job: Deployment
