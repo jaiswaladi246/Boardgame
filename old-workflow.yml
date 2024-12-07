@@ -1,0 +1,168 @@
+# name: Java CI with Maven and Deployment
+
+# on:
+#   push:
+#     branches: [ "main" ]
+#   pull_request:
+#     branches: [ "main" ]
+#     paths-ignore:
+#       - "docs/**"   
+#       - "*.md"       
+# jobs:
+#   #Job: Setup
+#   setup:
+#     runs-on: ubuntu-latest
+#     steps:
+#       # Check out the repository
+#       - name: Checkout Code
+#         uses: actions/checkout@v4
+
+#       # Remove conflicting packages and install dependencies
+#       - name: Install Dependencies
+#         run: |
+#           sudo apt-get install -y openjdk-17-jdk maven 
+#           echo "Dependencies installed successfully!"
+
+#   #Job: Build
+#   build:
+#     runs-on: ubuntu-latest
+#     needs: setup  # Ensure Setup job runs first
+#     steps:
+#       # Check out the repository
+#       - name: Checkout Code
+#         uses: actions/checkout@v4
+
+#       # Build with Maven
+#       - name: Build with Maven
+#         run: mvn -B package --file pom.xml
+
+#       # Trivy FS Scan
+#       - name: Trivy FS Scan
+#         run: |
+#           docker run --rm -v $(pwd):/project aquasec/trivy fs --format table -o /project/fs.html /project
+#       # Upload FS Scan Report
+#       - name: Upload FS Scan Report
+#         uses: actions/upload-artifact@v3
+#         with:
+#           name: fs-scan-report
+#           path: fs.html
+
+#       # SonarCloud Scan
+#       - name: SonarCloud Scan
+#         uses: sonarsource/sonarcloud-github-action@master
+#         env:
+#           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+
+#   # Job: Deployment
+#   build-push-image:
+#     runs-on: ubuntu-latest
+#     #needs: build  # Ensure Build job runs first
+#     steps:
+#       # Check out the repository
+#       - name: Checkout Code
+#         uses: actions/checkout@v4
+      
+#       - name: Build JAR with Maven
+#         run: |
+#           mvn package -DskipTests
+
+#         # Login to Docker Hub
+#       - name: Login to Docker Hub
+#         uses: docker/login-action@v3
+#         with:
+#           username: ${{ secrets.DOCKERHUB_USERNAME }}
+#           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+#       # Build Docker image
+#       - name: Build Docker Image
+#         run: |
+#           docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/boardgame:latest .
+
+#         # Push Docker Image to Docker Hub
+#       - name: Push Docker Image
+#         run: |
+#           docker push ${{ secrets.DOCKERHUB_USERNAME }}/boardgame:latest
+
+
+#       # Trivy Image Scan
+#       - name: Trivy Image Scan
+#         run: |
+#           docker run --rm -v $(pwd):/output aquasec/trivy image --format html -o /output/trivy-image-report.html ${{ secrets.DOCKERHUB_USERNAME }}/boardgame:latest
+
+#       # Upload Trivy Image Scan Report
+#       - name: Upload Trivy Image Scan Report
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: trivy-image-report
+#           path: trivy-image-report.html
+
+#   deployment:
+#     runs-on: ubuntu-latest
+#     steps:
+#       # Checkout repository code
+#       - name: Checkout Code
+#         uses: actions/checkout@v4
+
+#       # Log in to Azure
+#       - name: Log in to Azure
+#         uses: azure/login@v1
+#         with:
+#           creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+#       # Set up Kubernetes context for AKS
+#       - name: Set up AKS
+#         run: |
+#           az aks get-credentials --resource-group ${{ secrets.RESOURCE_NAME }} --name ${{ secrets.CLUSTER_NAME }}
+
+#       #Check nodes
+#       - name: Check nodes
+#         run: kubectl get nodes
+
+#       # Deploy to AKS using kubectl
+#       - name: Deploy to AKS
+#         run: |
+#           kubectl apply -f deployment-service.yaml
+
+#   monitoring: 
+#     runs-on: ubuntu-latest
+#     steps:
+#     - name: Checkout Code
+#       uses: actions/checkout@v4
+
+#     - name: Set up Azure CLI
+#       uses: azure/login@v2
+#       with:
+#         creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+#     - name: Configure Kubernetes Context
+#       run: |
+#         az aks get-credentials --resource-group ${{ secrets.RESOURCE_NAME }} --name ${{ secrets.CLUSTER_NAME }}
+
+#     - name: Install Helm
+#       run: |
+#         curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+#     - name: Add Helm Repositories
+#       run: |
+#         helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+#         helm repo add grafana https://grafana.github.io/helm-charts
+#         helm repo update
+
+#     - name: Create Namespace for Monitoring
+#       run: |
+#         kubectl create namespace monitoring || echo "Namespace monitoring already exists"
+
+#     - name: Deploy Prometheus
+#       run: |
+#         helm upgrade --install prometheus prometheus-community/prometheus --namespace monitoring
+
+#     - name: Deploy Grafana
+#       run: |
+#         helm upgrade --install grafana  grafana/grafana --namespace monitoring --set adminPassword=${{ secrets.GRAFANA }} --set service.type=LoadBalancer
+
+#     - name: Verify Pods
+#       run: |
+#         kubectl get pods -n monitoring
+
+

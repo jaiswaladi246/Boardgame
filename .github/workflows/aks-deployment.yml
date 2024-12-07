@@ -1,0 +1,28 @@
+name: Deploy to AKS
+on:
+  workflow_run:
+    workflows: ["Docker Build and Push"]
+    types:
+      - completed
+jobs:
+  deployment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Log in to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Set up AKS
+        run: |
+          az aks get-credentials --resource-group ${{ secrets.RESOURCE_NAME }} --name ${{ secrets.CLUSTER_NAME }}
+
+      - name: Check nodes
+        run: kubectl get nodes
+
+      - name: Deploy to AKS
+        run: |
+          kubectl apply -f deployment-service.yaml

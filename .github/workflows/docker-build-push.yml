@@ -1,0 +1,39 @@
+name: Docker Build and Push
+on:
+  workflow_run:
+    workflows: ["Build and Test"]
+    types:
+      - completed
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Build JAR with Maven
+        run: mvn package -DskipTests
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build Docker Image
+        run: |
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/boardgame:latest .
+
+      - name: Push Docker Image
+        run: |
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/boardgame:latest
+
+      - name: Trivy Image Scan
+        run: |
+          docker run --rm -v $(pwd):/output aquasec/trivy image --format html -o /output/trivy-image-report.html ${{ secrets.DOCKERHUB_USERNAME }}/boardgame:latest
+
+      - name: Upload Trivy Image Scan Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-image-report
+          path: trivy-image-report.html

@@ -1,0 +1,30 @@
+name: Build and Test
+on:  
+  workflow_run:
+    workflows: ["Setup"]
+    types:
+      - completed
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml
+
+      - name: Trivy FS Scan
+        run: |
+          docker run --rm -v $(pwd):/project aquasec/trivy fs --format table -o /project/fs.html /project
+
+      - name: Upload FS Scan Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: fs-scan-report
+          path: fs.html
+
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

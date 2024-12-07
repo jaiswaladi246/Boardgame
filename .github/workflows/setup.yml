@@ -1,0 +1,20 @@
+name: Setup
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+    paths-ignore:
+      - "docs/**"   
+      - "*.md"  
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get install -y openjdk-17-jdk maven
+          echo "Dependencies installed successfully!"
