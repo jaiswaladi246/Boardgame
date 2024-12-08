@@ -14,7 +14,6 @@ jobs:
       - name: Build with Maven
         run: mvn -B package --file pom.xml
 
-
       - name: Trivy FS Scan
         uses: aquasecurity/trivy-action@master
         with:

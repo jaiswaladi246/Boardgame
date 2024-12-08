@@ -2,6 +2,9 @@ name: Setup
 on:
   push:
     branches: [ "main" ]
+    paths-ignore:
+      - "docs/**"   
+      - "*.md"  
   pull_request:
     branches: [ "main" ]
     paths-ignore:
@@ -18,3 +21,19 @@ jobs:
         run: |
           sudo apt-get install -y openjdk-17-jdk maven
           echo "Dependencies installed successfully!"
+
+      - name: Download OWASP Dependency Check
+        run: |
+          VERSION=$(curl -s https://jeremylong.github.io/DependencyCheck/current.txt)
+          curl -Ls "https://github.com/jeremylong/DependencyCheck/releases/download/v$VERSION/dependency-check-$VERSION-release.zip" --output dependency-check.zip
+          unzip dependency-check-8.3.2-release.zip -d dependency-check
+
+      - name: Run OWASP Dependency Check
+        run: |
+          dependency-check/bin/dependency-check.sh --project "BoardGame" --scan . --format "HTML" --out dependency-check-report
+
+      - name: Upload OWASP Dependency Check Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: owasp-dependency-check
+          path: dependency-check-report
