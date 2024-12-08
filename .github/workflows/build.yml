@@ -1,11 +1,10 @@
 name: Build and Test
-# on:  
-#   workflow_run:
-#     workflows: ["Setup"]
-#     types:
-#       - completed
-on: 
-  workflow_dispatch:
+on:
+  workflow_run:
+    workflows: ["Setup"]
+    types:
+      - completed
+
 jobs:
   build:
     runs-on: ubuntu-latest
