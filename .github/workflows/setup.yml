@@ -24,8 +24,7 @@ jobs:
 
       - name: Download OWASP Dependency Check
         run: |
-          VERSION=$(curl -s https://jeremylong.github.io/DependencyCheck/current.txt)
-          curl -Ls "https://github.com/jeremylong/DependencyCheck/releases/download/v$VERSION/dependency-check-$VERSION-release.zip" --output dependency-check.zip
+          curl -Ls "https://github.com/jeremylong/DependencyCheck/releases/download/v11.1.1/dependency-check-11.1.1-release.zip" --output dependency-check.zip
           unzip dependency-check-8.3.2-release.zip -d dependency-check
 
       - name: Run OWASP Dependency Check
