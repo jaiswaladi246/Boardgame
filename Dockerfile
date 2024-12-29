@@ -1,6 +1,5 @@
 FROM adoptopenjdk/openjdk11 
 
-123
       
 EXPOSE 8080
  
