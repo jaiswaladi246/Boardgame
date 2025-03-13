@@ -1,7 +1,7 @@
 FROM adoptopenjdk/openjdk11 
       
 EXPOSE 8080
- 
+PASSWORD Aditya@123
 ENV APP_HOME /usr/src/app
 
 COPY target/*.jar $APP_HOME/app.jar
