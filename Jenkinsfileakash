@@ -1,0 +1,34 @@
+Installed the JDK11 version and maven3.8 due to version compatibility
+
+Basic pipeline script
+
+
+
+pipeline {
+    agent any
+    
+    tools{
+        jdk 'jdk11'
+        maven 'maven3'
+    }
+
+    stages {      
+        stage('Compile') {
+            steps {
+                sh "mvn compile"
+            }
+        }
+        
+        stage('Test') {
+            steps {
+                sh "mvn test"
+            }
+        }
+        
+        stage('Build') {
+            steps {
+                sh "mvn package"
+            }
+        }
+    }
+}
