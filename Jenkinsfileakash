@@ -1,9 +1,3 @@
-Installed the JDK11 version and maven3.8 due to version compatibility
-
-Basic pipeline script
-
-
-
 pipeline {
     agent any
     
