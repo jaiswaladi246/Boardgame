@@ -1,0 +1,21 @@
+version: 0.0
+os: linux
+files:
+  - source: target/database_service_project-0.0.4.jar
+    destination: /opt/database_service_project
+    overwrite: true
+
+hooks:
+  BeforeInstall:
+    - location: scripts/install_depen.sh
+      timeout: 300
+      runas: root
+
+  ApplicationStop:
+    - location: scripts/stop_server.sh
+      timeout: 300
+      runas: root
+  ApplicationStart:
+    - location: scripts/start_server.sh
+      timeout: 300
+      runas: root
