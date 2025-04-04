@@ -16,4 +16,6 @@ phases:
 artifacts:
   files:
     - target/database_service_project-0.0.4.jar
+    - appspec.yml
+    - scripts/*
   discard-paths: no

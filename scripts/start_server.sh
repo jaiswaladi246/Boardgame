@@ -1,4 +1,5 @@
 #!/bin/bash
 echo "Starting Java application..."
-nohup java -jar /home/ec2-user/myapp/app.jar >/home/ec2-user/myapp/app.log 2>&1 &
-echo "Java application started."
+chmod +x /opt/database_service_project/database_service_project-0.0.4.jar
+nohup java -jar /opt/database_service_project/database_service_project-0.0.4.jar >/opt/database_service_project/app.log 2>&1 &
+echo "Application started!"
