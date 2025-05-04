@@ -1,0 +1,21 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto17
+      nodejs: 18
+  build:
+    commands:
+      - echo "Hello World"
+      - mvn clean install
+  post_build:
+    commands:
+      - mvn test
+      - mvn package
+artifacts:
+  files:
+    - target/database_service_project-0.0.4.jar
+    - appspec.yml
+    - scripts/*
+  discard-paths: no

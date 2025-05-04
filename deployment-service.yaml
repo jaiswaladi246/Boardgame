@@ -1,12 +1,12 @@
 apiVersion: apps/v1
-kind: Deployment # Kubernetes resource kind we are creating
+kind: Deployment
 metadata:
   name: boardgame-deployment
 spec:
   selector:
     matchLabels:
       app: boardgame
-  replicas: 2 # Number of replicas that will be created for this deployment
+  replicas: 2
   template:
     metadata:
       labels:
@@ -14,17 +14,15 @@ spec:
     spec:
       containers:
         - name: boardgame
-          image: adijaiswal/boardshack:latest # Image that will be used to containers in the cluster
+          image: adijaiswal/boardshack:latest
           imagePullPolicy: Always
           ports:
-            - containerPort: 8080 # The port that the container is running on in the cluster
-
+            - containerPort: 8080
 
 ---
-
-apiVersion: v1 # Kubernetes API version
-kind: Service # Kubernetes resource kind we are creating
-metadata: # Metadata of the resource kind we are creating
+apiVersion: v1
+kind: Service
+metadata:
   name: boardgame-ssvc
 spec:
   selector:
@@ -32,5 +30,5 @@ spec:
   ports:
     - protocol: "TCP"
       port: 80
-      targetPort: 8080 
-  type: LoadBalancer # type of the service.
+      targetPort: 8080
+  type: LoadBalancer
