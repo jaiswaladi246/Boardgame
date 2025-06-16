@@ -4,7 +4,6 @@ pipeline {
         jdk 'jdk17'
         maven 'maven3'
     }
-
     stages {   
         stage('Compile') {
             steps {
