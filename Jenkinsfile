@@ -37,7 +37,7 @@ pipeline {
 
         stage('Hello') {
             steps {
-                echo 'This is Boardgame project CI-CD!'
+                echo 'This is Boardgame project CI-CD! Heloo '
             }
         }
     }
