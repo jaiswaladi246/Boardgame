@@ -10,7 +10,7 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 echo 'Cloning repository...'
-                checkout scm
+                git url: 'https://github.com/Savirean07/Boardgame.git', branch: 'main'
             }
         }
 
