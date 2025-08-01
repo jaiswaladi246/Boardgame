@@ -1,32 +1,56 @@
 pipeline {
     agent any
-    
+
     tools {
-        maven 'Maven3'
-        jdk 'jdk17'
+        maven 'Maven3'     // Ensure this name matches your Jenkins tool configuration
+        jdk 'jdk17'        // Ensure JDK 17 is installed and labeled as 'jdk17' in Jenkins
     }
 
     stages {
-        
-        stage('Compile') {
+        stage('Checkout Code') {
             steps {
-             sh 'mvn compile'
+                echo 'Cloning repository...'
+                checkout scm
             }
         }
-        stage('test') {
+
+        stage('Compile') {
             steps {
+                echo 'Compiling the application...'
+                sh 'mvn compile'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo 'Running unit tests...'
                 sh 'mvn test'
             }
         }
+
         stage('Package') {
             steps {
-               sh 'mvn package'
+                echo 'Packaging the application...'
+                sh 'mvn package'
             }
         }
+
         stage('Hello') {
             steps {
-                echo 'Hello World !'
+                echo 'Hello World!'
             }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline execution completed.'
+        }
+        success {
+            echo 'Build completed successfully!'
+        }
+        failure {
+            echo 'Build failed. Please check the logs.'
         }
     }
 }
