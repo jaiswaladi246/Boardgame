@@ -32,12 +32,10 @@ pipeline {
             steps {
                 echo 'Running SonarQube analysis...'
                 withSonarQubeEnv('sonarqube') {
-                    sh '''
-                        ${SONAR_SCANNER_HOME}/bin/sonar-scanner \
-                        -Dsonar.projectKey=Boardgame \
-                        -Dsonar.java.binaries=. \
-                        -Dsonar.exclusions=**/trivy-filescanproject-output.txt
-                    '''
+                
+                    sh "sonar-scanner -Dsonar.projectKey=Boardgame -Dsonar.java.binaries=. -Dsonar.exclusions=**/trivy-filescanproject-output.txt"
+
+
                 }
             }
         }
