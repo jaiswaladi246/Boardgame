@@ -32,7 +32,7 @@ pipeline {
                 withSonarQubeEnv('SonarQube') { // Ensure 'SonarQube' matches your SonarQube server configuration in Jenkins
                     sh ''' 
                         ${SONAR_SCANNER_HOME}/bin/sonar-scanner \
-                        -Dsonar.projectKey=Boardgame \                        
+                        -Dsonar.projectKey=Boardgame \                       
                         -Dsonar.java.binaries=. \
                         -Dsonar.exclusions=**/trivy-filescanproject-output.txt 
                     '''
