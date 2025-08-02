@@ -20,20 +20,13 @@ pipeline {
                 sh 'mvn compile'
             }
         }
-
-        stage('Test') {
+        stage('File scan by Trivy') {
             steps {
-                echo 'Running unit tests...'
-                sh 'mvn test'
+                echo 'Running Trivy scan...'
+                sh 'trivy fs --format table --output trivy-filescanproject-output.txt .'
             }
         }
 
-        stage('Package') {
-            steps {
-                echo 'Packaging the application...'
-                sh 'mvn package'
-            }
-        }
 
         stage('Hello') {
             steps {
