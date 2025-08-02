@@ -33,8 +33,8 @@ pipeline {
                     sh ''' 
                         ${Sonar_Scanner_Home}/bin/sonar-scanner \
                         -Dsonar.projectKey=Boardgame \                        
-                        -Dsonar.java.binaries=. 
-                        -Dsonar.exclusions=**trivy-filescanproject-output.txt \
+                        -Dsonar.java.binaries=. \
+                        -Dsonar.exclusions=**trivy-filescanproject-output.txt 
                     '''
                 }
             }
