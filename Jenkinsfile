@@ -3,7 +3,7 @@ pipeline {
 
     tools {
         maven 'Maven3'     // Ensure this name matches your Jenkins tool configuration
-        jdk 'Java 8'        // Ensure JDK 17 is installed and labeled as 'jdk17' in Jenkins
+        jdk 'Java 8'       // Ensure JDK 8 is installed and labeled as 'Java 8' in Jenkins
     }
 
     stages {
@@ -20,21 +20,23 @@ pipeline {
                 sh 'mvn compile'
             }
         }
+
         stage('File scan by Trivy') {
             steps {
                 echo 'Running Trivy scan...'
                 sh 'trivy fs --format table --output trivy-filescanproject-output.txt .'
             }
         }
+
         stage('Sonar Analysis') {
             steps {
                 echo 'Running SonarQube analysis...'
-                withSonarQubeEnv('SonarQube') { // Ensure 'SonarQube' matches your SonarQube server configuration in Jenkins
-                    sh ''' 
+                withSonarQubeEnv('SonarQube') {
+                    sh '''
                         ${SONAR_SCANNER_HOME}/bin/sonar-scanner \
-                        -Dsonar.projectKey=Boardgame \                       
+                        -Dsonar.projectKey=Boardgame \
                         -Dsonar.java.binaries=. \
-                        -Dsonar.exclusions=**/trivy-filescanproject-output.txt 
+                        -Dsonar.exclusions=**/trivy-filescanproject-output.txt
                     '''
                 }
             }
