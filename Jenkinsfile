@@ -26,24 +26,17 @@ pipeline {
                 sh 'trivy fs --format table --output trivy-filescanproject-output.txt .'
             }
         }
-
-
-        stage('Hello') {
+        stage('Sonar Analysis') {
             steps {
-                echo 'This is Boardgame project CI-CD! Heloo '
+                echo 'Running SonarQube analysis...'
+                withSonarQubeEnv('SonarQube') { // Ensure 'SonarQube' matches your SonarQube server configuration in Jenkins
+                    sh ''' Scanner_Home/bin/sonar-scanner \
+                        -Dsonar.projectKey=Boardgame \
+                        -Dsonar.projectkey=Boardgame \
+                        -Dsonar.java.binaries=. -Dsonar.exclusions=**trivy-filescanproject-output.txt \
+                    '''
+                }
             }
         }
-    }
 
-    post {
-        always {
-            echo 'Pipeline execution completed.'
-        }
-        success {
-            echo 'Build completed successfully!'
-        }
-        failure {
-            echo 'Build failed. Please check the logs.'
-        }
-    }
 }
