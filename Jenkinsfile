@@ -3,7 +3,8 @@ pipeline {
 
     tools {
         maven 'Maven3'     // Ensure this name matches your Jenkins tool configuration
-        jdk 'Java 8'       // Ensure JDK 8 is installed and labeled as 'Java 8' in Jenkins
+        jdk 'Java 8' 
+        sonarQubeScanner 'SonarScanner'      // Ensure JDK 8 is installed and labeled as 'Java 8' in Jenkins
     }
 
     stages {
