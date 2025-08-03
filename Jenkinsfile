@@ -37,5 +37,12 @@ pipeline {
                 }
             }
         }
+        stage('Check Scanner')
+        {
+            steps {
+                sh 'which sonar-scanner'
+                sh 'sonar-scanner --version'
+            }
+        }
     }
 }
