@@ -4,7 +4,10 @@ pipeline {
     tools {
         maven 'Maven3'     // Ensure this matches Jenkins config
         jdk 'Java 8'       // Ensure this is defined in Jenkins
+    }
 
+    environment {
+        registry = "https://your-jfrog-url"  // Replace with your actual JFrog base URL (without /artifactory)
     }
 
     stages {
@@ -42,25 +45,62 @@ pipeline {
             steps {
                 echo 'Running SonarQube analysis...'
                 withSonarQubeEnv('sonarqube') {
-                    sh '/opt/sonar-scanner/bin/sonar-scanner -Dsonar.projectKey=Boardgame -Dsonar.java.binaries=. -Dsonar.exclusions=**/trivy-filescanproject-output.txt'
-
+                    sh '''
+                        /opt/sonar-scanner/bin/sonar-scanner \
+                        -Dsonar.projectKey=Boardgame \
+                        -Dsonar.java.binaries=. \
+                        -Dsonar.exclusions=**/trivy-filescanproject-output.txt
+                    '''
                 }
             }
         }
+
         stage('Quality Gate') {
             steps {
                 echo 'Waiting for SonarQube Quality Gate...'
                 timeout(time: 1, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true, credentialsId: 'sonarqube'
-                        
+                    waitForQualityGate abortPipeline: true
                 }
-                
             }
         }
-        stage('Maven Package'){
+
+        stage('Maven Package') {
             steps {
-                echo 'Maven packaging started ....'
+                echo 'Maven packaging started...'
                 sh 'mvn package'
+            }
+        }
+
+        stage('Jar Publish') {
+            steps {
+                script {
+                    echo '<-------------- Jar Publish Started -------------->'
+
+                    def server = Artifactory.newServer(
+                        url: "${registry}/artifactory",
+                        credentialsId: "jfrogaccess"
+                    )
+
+                    def properties = "buildid=${env.BUILD_ID},commitid=${env.GIT_COMMIT}"
+
+                    def uploadSpec = """{
+                        "files": [
+                            {
+                                "pattern": "target/database_service_project.jar",
+                                "target": "boardgame-libs-release/",
+                                "flat": false,
+                                "props": "${properties}",
+                                "exclusions": ["*.sha1", "*.md5"]
+                            }
+                        ]
+                    }"""
+
+                    def buildInfo = server.upload(uploadSpec)
+                    buildInfo.env.collect()
+                    server.publishBuildInfo(buildInfo)
+
+                    echo '<-------------- Jar Publish Ended -------------->'
+                }
             }
         }
     }
