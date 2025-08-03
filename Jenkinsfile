@@ -7,7 +7,7 @@ pipeline {
     }
 
     environment {
-        registry = "https://your-jfrog-url"  // Replace with your actual JFrog base URL (without /artifactory)
+        registry = "https://trialosfhow.jfrog.io"  // Replace with your actual JFrog base URL (without /artifactory)
     }
 
     stages {
