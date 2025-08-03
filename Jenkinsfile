@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven3'     // Ensure this name matches your Jenkins tool configuration
-        jdk 'Java 8'       // Ensure JDK 8 is installed and labeled as 'Java 8' in Jenkins
-        sonarQubeScanner 'SonarScanner'      
+        maven 'Maven3'     // Ensure this matches Jenkins config
+        jdk 'Java 8'       // Ensure this is defined in Jenkins
+        sonarQubeScanner 'SonarScanner'  // Must match Global Tool Configuration name
     }
 
     stages {
@@ -29,20 +29,26 @@ pipeline {
             }
         }
 
+        stage('Check Scanner') {
+            steps {
+                echo 'Checking sonar-scanner path and version...'
+                sh 'echo $PATH'
+                sh 'which sonar-scanner || echo "sonar-scanner not found!"'
+                sh 'sonar-scanner --version || echo "Version check failed!"'
+            }
+        }
+
         stage('Sonar Analysis') {
             steps {
                 echo 'Running SonarQube analysis...'
                 withSonarQubeEnv('sonarqube') {
-                    sh 'sonar-scanner -Dsonar.projectKey=Boardgame -Dsonar.java.binaries=. -Dsonar.exclusions=**/trivy-filescanproject-output.txt'
-
+                    sh '''
+                        sonar-scanner \
+                          -Dsonar.projectKey=Boardgame \
+                          -Dsonar.java.binaries=. \
+                          -Dsonar.exclusions=**/trivy-filescanproject-output.txt
+                    '''
                 }
-            }
-        }
-        stage('Check Scanner')
-        {
-            steps {
-                sh 'which sonar-scanner'
-                sh 'sonar-scanner --version'
             }
         }
     }
