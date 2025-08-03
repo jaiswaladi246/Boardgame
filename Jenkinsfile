@@ -4,7 +4,7 @@ pipeline {
     tools {
         maven 'Maven3'     // Ensure this matches Jenkins config
         jdk 'Java 8'       // Ensure this is defined in Jenkins
-        sonarQubeScanner 'SonarScanner'  // Must match Global Tool Configuration name
+
     }
 
     stages {
