@@ -1,77 +1,131 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
- 
-    <modelVersion>4.0.0</modelVersion>
- 
-    <!-- 🔧 Basic project coordinates -->
-    <groupId>com.qubitware</groupId>        <!-- TODO: Change this to your company or GitHub org -->
-    <artifactId>To-Do-App</artifactId>        <!-- TODO: Match this to your repository/project name -->
-    <version>1.0.0</version>
-    <packaging>jar</packaging>              <!-- Use "war" if you're deploying to a servlet container -->
- 
-    <!-- 📘 Project Info -->
-    <name>To-Do App</name>
-    <description>A sample to-do app for CI/CD pipeline demo</description>
- 
-    <!-- 💡 Set Java version -->
-    <properties>
-        <maven.compiler.source>17</maven.compiler.source>   <!-- Change to your Java version -->
-        <maven.compiler.target>17</maven.compiler.target>
-    </properties>
- 
-    <!-- 📦 Dependencies -->
-    <dependencies>
-        <!-- Example: JUnit for testing -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13.2</version>
-            <scope>test</scope>
-        </dependency>
- 
-        <!-- Add your app-specific dependencies here -->
-        <!-- Example: Spring Boot -->
-        <!--
-        <dependency>
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.5.6</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.javaproject</groupId>
+	<artifactId>database_service_project</artifactId>
+	<version>0.0.7-SNAPSHOT</version>
+	<name>database_service_project</name>
+	<description>Project for Spring Boot</description>
+	<packaging>jar</packaging>
+	<properties>
+		<java.version>11</java.version>
+		<jacoco.version>0.8.7</jacoco.version>
+   		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+    		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+    		<sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
+    		<sonar.language>java</sonar.language>
+		
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.thymeleaf.extras</groupId>
+			<artifactId>thymeleaf-extras-springsecurity5</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jdbc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
-        -->
-    </dependencies>
- 
-    <!-- 🔌 Plugins -->
-    <build>
-        <plugins>
-            <!-- Compiler Plugin -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.10.1</version>
-                <configuration>
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.target}</target>
-                </configuration>
-            </plugin>
- 
-            <!-- Optional: Shade plugin to create fat JAR -->
-            <!--
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.3.0</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            -->
-        </plugins>
-    </build>
- 
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+    <groupId>org.jacoco</groupId> 
+    <artifactId>jacoco-maven-plugin</artifactId>
+    <version>0.8.7</version>
+</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+
+			<plugin>
+    <groupId>org.jacoco</groupId>
+    <artifactId>jacoco-maven-plugin</artifactId>
+    <version>${jacoco.version}</version>
+    <executions>
+        <execution>
+            <id>jacoco-initialize</id>
+            <goals>
+                <goal>prepare-agent</goal>
+            </goals>
+        </execution>
+        <execution>
+            <id>jacoco-site</id>
+            <phase>package</phase>
+            <goals>
+                <goal>report</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+		</plugins>
+	</build>
+
+
+	 <distributionManagement>
+        <repository>
+            <id>maven-releases</id>
+            <url>http://13.201.64.186:8081/repository/maven-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>maven-snapshots</id>
+            <url>http://13.201.64.186:8081/repository/maven-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
 </project>
