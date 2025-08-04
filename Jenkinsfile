@@ -10,6 +10,7 @@ pipeline {
         registry = "https://trialosfhow.jfrog.io"  // Replace with your actual JFrog base URL (without /artifactory)
         IMAGE_NAME = "boardgame-app"
         IMAGE_TAG = "latest"
+        PATH = "/opt/sonar-scanner/bin:$PATH"
     }
 
     stages {
