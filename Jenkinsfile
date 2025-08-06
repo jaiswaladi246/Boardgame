@@ -7,17 +7,17 @@ pipeline {
     }
 
     environment {
-        registry = "https://trialosfhow.jfrog.io"  // Replace with your actual JFrog base URL (without /artifactory)
-        IMAGE_NAME = "himanshujangid/boardgame-app"
+        registry = "https://jfrog.io"  // Replace with your actual JFrog base URL (without /artifactory)
+        IMAGE_NAME = "Image Name"  // replace with your Docker image name 
         IMAGE_TAG = "latest"
-        PATH = "/opt/sonar-scanner/bin:$PATH"
+        PATH = "/opt/sonar-scanner/bin:$PATH"   // Replace with your Image path 
     }
 
     stages {
         stage('Checkout Code') {
             steps {
                 echo 'Cloning repository...'
-                git url: 'https://github.com/Savirean07/Boardgame.git', branch: 'main'
+                git url: 'https://github.com.git', branch: 'main'    // Replace with your git repo URl
             }
         }
 
@@ -39,7 +39,7 @@ pipeline {
             steps {
                 echo 'Checking sonar-scanner path and version...'
                 sh 'echo $PATH'
-                sh 'which sonar-scanner || echo "sonar-scanner not found!"'
+                sh 'which sonar-scanner || echo "sonar-scanner not found!"'    // jenkins Sonar scanner Creds
                 sh 'sonar-scanner --version || echo "Version check failed!"'
             }
         }
@@ -47,7 +47,7 @@ pipeline {
         stage('Sonar Analysis') {
             steps {
                 echo 'Running SonarQube analysis...'
-                withSonarQubeEnv('sonarqube') {
+                withSonarQubeEnv('sonarqube') {          // Replace with your Jenkins sonarqube creds name
                     sh '''
                         sonar-scanner \
                         -Dsonar.projectKey=Boardgame \
@@ -144,7 +144,7 @@ pipeline {
                 script {
                     echo 'Docker Push to Azure Container Registry started'
 
-                    def acrRegistry = 'todo1-fravf4hkffbshdbc.azurecr.io'
+                    def acrRegistry = ''          // Place your registry name here 
                     def acrImage = "${acrRegistry}/to-do-app:${IMAGE_TAG}"
 
                     sh "docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${acrImage}"
