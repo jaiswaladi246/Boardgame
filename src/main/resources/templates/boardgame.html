@@ -27,7 +27,7 @@
                 </div>
 
                 <div sec:authorize="!hasRole('ROLE_USER')">
-                    <p class="lead">For more services, login <a href="#" th:href="@{/login}">Here</a></p>
+                    <p class="lead">For more services, login <a href="#" th:href="@{/login}">He</a></p>
                     <p class="lead">To join to the service, <a href="#" th:href="@{/newUser}">Click</a> here</p>
                 </div>
                 <div sec:authorize="hasRole('ROLE_USER') || hasRole('ROLE_MANAGER')">
