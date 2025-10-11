@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.javaproject</groupId>
 	<artifactId>database_service_project</artifactId>
-	<version>0.0.7-SNAPSHOT</version>
+	<version>0.0.5</version>
 	<name>database_service_project</name>
 	<description>Project for Spring Boot</description>
 	<packaging>jar</packaging>
@@ -119,8 +119,8 @@
 
  <distributionManagement>
         <repository>
-            <id>maven-releases</id>
-            <url>http://13.200.254.31:8081/repository/maven-releases/</url>
+            <id>mvn-ds-releases</id>
+            <url>http://13.200.254.31:8081/repository/mvn-ds-releases/</url>
         </repository>
         <snapshotRepository>
             <id>maven-snapshots</id>
