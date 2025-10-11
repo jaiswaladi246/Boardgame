@@ -117,12 +117,15 @@
 	</build>
 
 
-	 <distributionManagement>
+ <distributionManagement>
         <repository>
-            <id>mvn-public</id>
-            <url>http://13.201.52.103:8081/repository/mvn-public/</url>
+            <id>custom-mvn-releases</id>
+            <url>http://13.201.52.103:8081/repository/custom-mvn-releases/</url>
         </repository>
-
+        <snapshotRepository>
+            <id>maven-snapshots</id>
+            <url>http://13.201.52.103:8081/repository/maven-snapshots/</url>
+        </snapshotRepository>
     </distributionManagement>
 
 	
