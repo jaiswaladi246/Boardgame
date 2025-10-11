@@ -119,12 +119,12 @@
 
  <distributionManagement>
         <repository>
-            <id>custom-mvn-releases</id>
-            <url>http://13.201.52.103:8081/repository/custom-mvn-releases/</url>
+            <id>maven-releases</id>
+            <url>http://13.200.254.31:8081/repository/maven-releases/</url>
         </repository>
         <snapshotRepository>
             <id>maven-snapshots</id>
-            <url>http://13.201.52.103:8081/repository/maven-snapshots/</url>
+            <url>http://13.200.254.31:8081/repository/maven-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 
