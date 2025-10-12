@@ -35,9 +35,27 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION }}
           ECR_REPOSITORY: boardgame   # change if your ECR repo name is different
           IMAGE_TAG: ${{ github.sha }}
-          ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
         run: |
           set -euo pipefail
+
+          # Resolve AWS account id: prefer provided secret, fall back to STS
+          if [ -z "${AWS_ACCOUNT_ID:-}" ] || [ "${AWS_ACCOUNT_ID}" = "null" ]; then
+            echo "AWS_ACCOUNT_ID secret is empty or not provided; attempting to query via STS..."
+            AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text) || {
+              echo "ERROR: Cannot determine AWS account id from secrets or STS. Set secret AWS_ACCOUNT_ID or ensure AWS credentials can call sts:GetCallerIdentity." >&2
+              exit 1
+            }
+            echo "Resolved AWS account id: ${AWS_ACCOUNT_ID}"
+          fi
+
+          # Compute ECR registry and validate
+          ECR_REGISTRY="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+          if [[ -z "${ECR_REGISTRY//./}" ]]; then
+            echo "ERROR: Computed ECR_REGISTRY is empty or invalid: '${ECR_REGISTRY}'" >&2
+            exit 1
+          fi
+
+          echo "Using ECR registry: ${ECR_REGISTRY} and repository: ${ECR_REPOSITORY}"
 
           # Create ECR repository if it doesn't already exist
           if ! aws ecr describe-repositories --repository-names "${ECR_REPOSITORY}" >/dev/null 2>&1; then
@@ -51,7 +69,6 @@ jobs:
           docker buildx inspect builder >/dev/null 2>&1 || docker buildx create --name builder --use
 
           # Build and push multi-arch image (amd64 + arm64) to ECR with registry cache
-          # Use the ECR repo as a remote cache (tag 'buildcache') so subsequent builds are faster
           CACHE_REF="${ECR_REGISTRY}/${ECR_REPOSITORY}:buildcache"
           docker buildx build \
             --platform linux/amd64,linux/arm64 \
