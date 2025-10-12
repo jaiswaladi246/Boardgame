@@ -118,12 +118,16 @@
 
 
  <distributionManagement>
-        <repository>
-            <id>mvn-group-repo</id>
-            <url>http://13.235.50.216:8081/repository/mvn-group-repo/</url>
-        </repository>
-        
-    </distributionManagement>
+  <repository>
+    <id>maven-releases</id>
+    <url>http://13.235.50.216:8081/repository/maven-releases/</url>
+  </repository>
+  <snapshotRepository>
+    <id>maven-snapshots</id>
+    <url>http://13.235.50.216:8081/repository/maven-snapshots/</url>
+  </snapshotRepository>
+</distributionManagement>
+
 
 	
 
