@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.5.6</version>
+		<version>3.2.6</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.javaproject</groupId>
@@ -15,7 +15,9 @@
 	<description>Project for Spring Boot</description>
 	<packaging>jar</packaging>
 	<properties>
-		<java.version>11</java.version>
+		<java.version>21</java.version>
+		<!-- Use maven-compiler-plugin release flag to target Java 21 -->
+		<maven.compiler.release>21</maven.compiler.release>
 		<jacoco.version>0.8.7</jacoco.version>
    		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
     		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
@@ -27,11 +29,19 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.thymeleaf.extras</groupId>
-			<artifactId>thymeleaf-extras-springsecurity5</artifactId>
+			<artifactId>thymeleaf-extras-springsecurity6</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+		<!-- Jakarta Servlet API for Spring Boot 3 (Jakarta EE 9+) -->
+		<dependency>
+			<groupId>jakarta.servlet</groupId>
+			<artifactId>jakarta.servlet-api</artifactId>
+			<version>6.0.0</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
@@ -58,6 +68,7 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
+			<version>1.18.30</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
@@ -91,6 +102,57 @@
 						</exclude>
 					</excludes>
 				</configuration>
+			</plugin>
+
+			<!-- Ensure compilation uses Java 21 when available -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.11.0</version>
+				<configuration>
+					<release>${maven.compiler.release}</release>
+					<!-- Fork javac to avoid classloader conflicts with internal compiler APIs -->
+					<fork>true</fork>
+					<executable>${JAVA_HOME}/bin/javac</executable>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+							<version>1.18.30</version>
+						</path>
+					</annotationProcessorPaths>
+				</configuration>
+			</plugin>
+
+				<!-- Provide Jakarta Servlet API for Spring Boot 3 / Jakarta EE 9+ -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<version>3.6.0</version>
+				</plugin>
+
+			<!-- Enforce JDK 21 for builds -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<version>3.1.0</version>
+				<executions>
+					<execution>
+						<id>enforce-java</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<requireJavaVersion>
+									<!-- Accept JDK 21 and above -->
+									<version>[21,)</version>
+								</requireJavaVersion>
+							</rules>
+							<fail>true</fail>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 
 			<plugin>

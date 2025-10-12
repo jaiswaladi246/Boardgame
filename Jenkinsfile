@@ -2,8 +2,10 @@ pipeline {
     agent any
 
  tools {
-     jdk 'java17'
-     maven 'maven3.6'
+     // Update to JDK 21; ensure your Jenkins tool configuration has an entry named 'java21'
+     // Ensure your Jenkins has tools named 'java21' and 'maven3.9' (or change these names to match your Jenkins tool config)
+     jdk 'java21'
+     maven 'maven3.9'
  }
     
     stages {

@@ -1,0 +1,83 @@
+name: Build and publish Docker image to ECR
+
+on:
+  push:   # runs on every git push (all branches and tags)
+
+concurrency:
+  group: build-and-push-ecr
+  cancel-in-progress: true
+
+jobs:
+  build-and-push:
+    name: Build and push Docker image to ECR
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Set up QEMU and Buildx (for multi-arch builds)
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build, tag and push image to ECR
+        env:
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          ECR_REPOSITORY: boardgame   # change if your ECR repo name is different
+          IMAGE_TAG: ${{ github.sha }}
+          ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+        run: |
+          set -euo pipefail
+
+          # Create ECR repository if it doesn't already exist
+          if ! aws ecr describe-repositories --repository-names "${ECR_REPOSITORY}" >/dev/null 2>&1; then
+            echo "ECR repository ${ECR_REPOSITORY} not found — creating..."
+            aws ecr create-repository --repository-name "${ECR_REPOSITORY}" >/dev/null
+          else
+            echo "ECR repository ${ECR_REPOSITORY} exists"
+          fi
+
+          # Ensure buildx builder exists
+          docker buildx inspect builder >/dev/null 2>&1 || docker buildx create --name builder --use
+
+          # Build and push multi-arch image (amd64 + arm64) to ECR with registry cache
+          # Use the ECR repo as a remote cache (tag 'buildcache') so subsequent builds are faster
+          CACHE_REF="${ECR_REGISTRY}/${ECR_REPOSITORY}:buildcache"
+          docker buildx build \
+            --platform linux/amd64,linux/arm64 \
+            --tag "${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}" \
+            --tag "${ECR_REGISTRY}/${ECR_REPOSITORY}:latest" \
+            --cache-from type=registry,ref=${CACHE_REF} \
+            --cache-to type=registry,ref=${CACHE_REF},mode=max \
+            --push .
+
+      - name: Scan pushed image with Trivy (warn on HIGH/CRITICAL)
+        continue-on-error: true
+        env:
+          ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+          ECR_REPOSITORY: boardgame
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          # Authenticate docker client to ECR so Trivy can pull the image
+          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${ECR_REGISTRY}
+
+          # Scan the pushed image for HIGH and CRITICAL vulnerabilities and do NOT fail the job (only warn)
+          docker run --rm aquasec/trivy:0.43.1 image --format table --severity HIGH,CRITICAL ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG} || echo "Trivy detected HIGH/CRITICAL vulnerabilities (warning only)."
+
+      - name: Output pushed image
+        env:
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          GITHUB_SHA: ${{ github.sha }}
+        run: |
+          echo "Pushed image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/boardgame:${GITHUB_SHA}"
