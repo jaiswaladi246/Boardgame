@@ -6,7 +6,7 @@ on:
 concurrency:
   group: build-and-push-ecr
   cancel-in-progress: true
-
+ 
 jobs:
   build-and-push:
     name: Build and push Docker image to ECR
