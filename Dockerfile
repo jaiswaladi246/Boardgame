@@ -1,4 +1,4 @@
-FROM openjdk:17.0.1-jdk-slim
+FROM openjdk:17-alpine
         
 EXPOSE 8080
  
